@@ -36,112 +36,121 @@ namespace Vinar
 
         public void Transcribe()
         {
-            LoadStarted?.Invoke(this, new EventArgs());
-
-            var credentials = Credentials.Load("../../../../credentials.yml");
-
-            System.Net.ServicePointManager.SecurityProtocol |= System.Net.SecurityProtocolType.Tls12;
-
-            // Create HTTP client
-            var handler = new HttpClientHandler();
-            handler.AllowAutoRedirect = false;
-            var client = new HttpClient(handler);
-
-            // Obtain access token
-            client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", credentials.ApiKey);
-            var accountAccessTokenRequestResult = client.GetAsync($"{credentials.UrlBase}/AccessToken?allowEdit=true").Result;
-            var accountAccessToken = accountAccessTokenRequestResult.Content.ReadAsStringAsync().Result.Replace("\"", "");
-            client.DefaultRequestHeaders.Remove("Ocp-Apim-Subscription-Key");
-
-            Debug.WriteLine("Uploading...");
-
-            // Get video from file
-            FileStream video = File.OpenRead(videoPath);
-            byte[] buffer = new byte[video.Length];
-            video.Read(buffer, 0, buffer.Length);
-
-            // Create content
-            var content = new MultipartFormDataContent();
-            content.Add(new ByteArrayContent(buffer));
-
-            UploadStarted?.Invoke(this, new EventArgs());
-
-            // Build upload request
-            string name = Path.GetFileName(videoPath);
-            string uploadRequestUrl = $"{credentials.UrlBase}/Videos?accessToken={accountAccessToken}&name={name}&privacy=private";
-
-            // Send upload request
-            var uploadRequestResult = client.PostAsync(uploadRequestUrl, content).Result;
-            var uploadResult = uploadRequestResult.Content.ReadAsStringAsync().Result;
-
-            // Get video ID from upload result
-            string videoId = JsonConvert.DeserializeObject<dynamic>(uploadResult)["id"];
-
-            TranscriptionStarted?.Invoke(this, new EventArgs());
-
-            Debug.WriteLine("Uploaded");
-            Debug.WriteLine("Video ID: " + videoId);
-
-            // Obtain video access token
-            client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", credentials.ApiKey);
-            var videoTokenRequestResult = client.GetAsync($"{credentials.UrlBase}/Video/{videoId}/AccessToken?allowEdit=true").Result;
-            var videoAccessToken = videoTokenRequestResult.Content.ReadAsStringAsync().Result.Replace("\"", "");
-
-            // Wait for video index to finish
-            while (true)
+            try
             {
-                Debug.WriteLine("Sleepy time...");
+                LoadStarted?.Invoke(this, new EventArgs());
 
-                Thread.Sleep(5000);
-                Debug.WriteLine("Checking state...");
+                var credentials = Credentials.Load("../../../../credentials.yml");
 
-                // Get processing state
-                var videoGetIndexRequestResult = client.GetAsync($"{credentials.UrlBase}/Video/{videoId}/Index?accessToken={videoAccessToken}&language=English").Result;
-                var videoGetIndexResult = videoGetIndexRequestResult.Content.ReadAsStringAsync().Result;
-                string processingState = JsonConvert.DeserializeObject<dynamic>(videoGetIndexResult)["state"];
+                System.Net.ServicePointManager.SecurityProtocol |= System.Net.SecurityProtocolType.Tls12;
 
-                Debug.WriteLine("");
-                Debug.WriteLine("State:");
-                Debug.WriteLine(processingState);
+                // Create HTTP client
+                var handler = new HttpClientHandler();
+                handler.AllowAutoRedirect = false;
+                var client = new HttpClient(handler);
 
-                // If job is finished
-                if (processingState == "Processed")
+                // Obtain access token
+                client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", credentials.ApiKey);
+                var accountAccessTokenRequestResult = client.GetAsync($"{credentials.UrlBaseAuth}/AccessToken?allowEdit=true").Result;
+                var accountAccessToken = accountAccessTokenRequestResult.Content.ReadAsStringAsync().Result.Replace("\"", "");
+                client.DefaultRequestHeaders.Remove("Ocp-Apim-Subscription-Key");
+
+                Debug.WriteLine("Uploading...");
+
+                // Get video from file
+                FileStream video = File.OpenRead(videoPath);
+                byte[] buffer = new byte[video.Length];
+                video.Read(buffer, 0, buffer.Length);
+
+                // Create content
+                var content = new MultipartFormDataContent();
+                content.Add(new ByteArrayContent(buffer));
+
+                UploadStarted?.Invoke(this, new EventArgs());
+
+                // Build upload request
+                string name = Path.GetFileName(videoPath);
+                string externalId = "123";
+                string uploadRequestUrl = $"{credentials.UrlBase}/Videos?accessToken={accountAccessToken}&name={name}&privacy=private&externalId={externalId}";
+
+                // Send upload request
+                var uploadRequestResult = client.PostAsync(uploadRequestUrl, content).Result;
+                var uploadResult = uploadRequestResult.Content.ReadAsStringAsync().Result;
+
+                // Get video ID from upload result
+                string videoId = JsonConvert.DeserializeObject<dynamic>(uploadResult)["id"];
+
+                TranscriptionStarted?.Invoke(this, new EventArgs());
+
+                Debug.WriteLine("Uploaded");
+                Debug.WriteLine("Video ID: " + videoId);
+
+                // Obtain video access token
+                client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", credentials.ApiKey);
+                var videoTokenRequestResult = client.GetAsync($"{credentials.UrlBaseAuth}/Videos/{videoId}/AccessToken?allowEdit=true").Result;
+                var videoAccessToken = videoTokenRequestResult.Content.ReadAsStringAsync().Result.Replace("\"", "");
+
+                // Wait for video index to finish
+                while (true)
                 {
-                    //left in for future testing needs 
-                    // Debug.WriteLine("");
-                    // Debug.WriteLine("Full JSON:");
-                    //Debug.WriteLine(videoGetIndexResult);
+                    Debug.WriteLine("Sleepy time...");
 
-                    // Get raw transcript
+                    Thread.Sleep(2000);
+                    Debug.WriteLine("Checking state...");
+
+                    // Get processing state
+                    var videoGetIndexRequestResult = client.GetAsync($"{credentials.UrlBase}/Videos/{videoId}/Index?accessToken={videoAccessToken}&language=English").Result;
+                    var videoGetIndexResult = videoGetIndexRequestResult.Content.ReadAsStringAsync().Result;
+
                     var jObject = JObject.Parse(videoGetIndexResult);
-                    JArray transArray = jObject["videos"][0]["insights"]["transcript"].ToObject<JArray>();
+                    string processingState = (string)jObject["state"];
 
-                    // Produce list of subtitles
-                    var subtitles = new List<Tuple<DateTime, String>>();
+                    Debug.WriteLine("");
+                    Debug.WriteLine("State:");
+                    Debug.WriteLine(processingState);
 
-                    foreach (var subtitle in transArray)
+                    // If job is finished
+                    if (processingState == "Processed")
                     {
-                        Debug.WriteLine(subtitle);
+                        //left in for future testing needs 
+                        // Debug.WriteLine("");
+                        // Debug.WriteLine("Full JSON:");
+                        //Debug.WriteLine(videoGetIndexResult);
 
-                        string text = (string)subtitle["text"];
-                        DateTime datetime = DateTime.Parse((string)subtitle["instances"][0]["start"]);
+                        // Get raw transcript
+                        JArray transArray = jObject["videos"][0]["insights"]["transcript"].ToObject<JArray>();
 
-                        subtitles.Add(new Tuple<DateTime, String>(datetime, text));
+                        // Produce list of subtitles
+                        var subtitles = new List<SubtitleEntry>();
+
+                        foreach (var subtitle in transArray)
+                        {
+                            Debug.WriteLine(subtitle);
+
+                            string text = (string)subtitle["text"];
+                            DateTime datetime = DateTime.Parse((string)subtitle["instances"][0]["start"]);
+
+                            subtitles.Add(new SubtitleEntry { Timestamp = datetime, Content = text });
+                        }
+
+                        TranscriptionCompleted?.Invoke(this, new TranscriptionEventArgs() { Subtitles = subtitles });
+
+                        Debug.WriteLine("-----------------");
+
+                        return;
                     }
+                    else
+                    {
+                        string processingProgress = (string)jObject["videos"][0]["processingProgress"];
+                        int percent = int.Parse(processingProgress.Substring(0, processingProgress.Length - 1));
 
-                    TranscriptionCompleted?.Invoke(this, new TranscriptionEventArgs() { Subtitles = subtitles });
-
-                    Debug.WriteLine("-----------------");
+                        ProgressUpdated?.Invoke(this, new ProgressEventArgs() { Percent = percent });
+                    }
                 }
-                else
-                {
-                    var jObject = JObject.Parse(videoGetIndexResult);
-
-                    string processingProgress = JsonConvert.DeserializeObject<dynamic>(videoGetIndexResult)["processingProgress"];
-                    int percent = int.Parse(processingProgress.Substring(0, processingProgress.Length - 1));
-
-                    ProgressUpdated?.Invoke(this, new ProgressEventArgs() { Percent = percent });
-                }
+            }
+            catch (Exception ex)
+            {
+                ErrorOccurred?.Invoke(this, new TranscriptionErrorEventArgs() { Error = ex });
             }
         }
 
@@ -153,6 +162,11 @@ namespace Vinar
             public string ApiKey = "";
 
             public string UrlBase
+            {
+                get { return $"{ApiUrl}/{Location}/Accounts/{AccountId}"; }
+            }
+
+            public string UrlBaseAuth
             {
                 get { return $"{ApiUrl}/auth/{Location}/Accounts/{AccountId}"; }
             }
@@ -176,7 +190,7 @@ namespace Vinar
 
         public class TranscriptionEventArgs : EventArgs
         {
-            public IEnumerable<Tuple<DateTime, String>> Subtitles { get; set; }
+            public List<SubtitleEntry> Subtitles { get; set; }
         }
 
         public class TranscriptionErrorEventArgs : EventArgs

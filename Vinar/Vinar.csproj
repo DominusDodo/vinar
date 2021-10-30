@@ -58,6 +58,7 @@
     <Compile Include="FormVideoLoader.Designer.cs">
       <DependentUpon>FormVideoLoader.cs</DependentUpon>
     </Compile>
+    <Compile Include="SubtitleEntry.cs" />
     <Compile Include="Transcriber.cs" />
     <Compile Include="Vinar.cs">
       <SubType>Form</SubType>
