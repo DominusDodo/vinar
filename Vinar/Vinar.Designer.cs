@@ -232,7 +232,7 @@
             // splitToolStripMenuItem
             // 
             this.splitToolStripMenuItem.Name = "splitToolStripMenuItem";
-            this.splitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
+            this.splitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.K)));
             this.splitToolStripMenuItem.Size = new System.Drawing.Size(259, 22);
             this.splitToolStripMenuItem.Text = "Split at cursor";
             this.splitToolStripMenuItem.Click += new System.EventHandler(this.splitToolStripMenuItem_Click);

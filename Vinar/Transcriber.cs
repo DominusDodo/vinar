@@ -9,8 +9,6 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using YamlDotNet.Serialization;
-using YamlDotNet.Serialization.NamingConventions;
 
 namespace Vinar
 {
@@ -50,8 +48,8 @@ namespace Vinar
                 var client = new HttpClient(handler);
 
                 // Obtain access token
-                client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", credentials.ApiKey);
-                var accountAccessTokenRequestResult = client.GetAsync($"{credentials.UrlBaseAuth}/AccessToken?allowEdit=true").Result;
+                client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", credentials.Transcription.Key);
+                var accountAccessTokenRequestResult = client.GetAsync($"{credentials.Transcription.UrlBaseAuth}/AccessToken?allowEdit=true").Result;
                 var accountAccessToken = accountAccessTokenRequestResult.Content.ReadAsStringAsync().Result.Replace("\"", "");
                 client.DefaultRequestHeaders.Remove("Ocp-Apim-Subscription-Key");
 
@@ -71,7 +69,7 @@ namespace Vinar
                 // Build upload request
                 string name = Path.GetFileName(videoPath);
                 string externalId = "123";
-                string uploadRequestUrl = $"{credentials.UrlBase}/Videos?accessToken={accountAccessToken}&name={name}&privacy=private&externalId={externalId}";
+                string uploadRequestUrl = $"{credentials.Transcription.UrlBase}/Videos?accessToken={accountAccessToken}&name={name}&privacy=private&externalId={externalId}";
 
                 // Send upload request
                 var uploadRequestResult = client.PostAsync(uploadRequestUrl, content).Result;
@@ -86,8 +84,8 @@ namespace Vinar
                 Debug.WriteLine("Video ID: " + videoId);
 
                 // Obtain video access token
-                client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", credentials.ApiKey);
-                var videoTokenRequestResult = client.GetAsync($"{credentials.UrlBaseAuth}/Videos/{videoId}/AccessToken?allowEdit=true").Result;
+                client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", credentials.Transcription.Key);
+                var videoTokenRequestResult = client.GetAsync($"{credentials.Transcription.UrlBaseAuth}/Videos/{videoId}/AccessToken?allowEdit=true").Result;
                 var videoAccessToken = videoTokenRequestResult.Content.ReadAsStringAsync().Result.Replace("\"", "");
 
                 // Wait for video index to finish
@@ -99,7 +97,7 @@ namespace Vinar
                     Debug.WriteLine("Checking state...");
 
                     // Get processing state
-                    var videoGetIndexRequestResult = client.GetAsync($"{credentials.UrlBase}/Videos/{videoId}/Index?accessToken={videoAccessToken}&language=English").Result;
+                    var videoGetIndexRequestResult = client.GetAsync($"{credentials.Transcription.UrlBase}/Videos/{videoId}/Index?accessToken={videoAccessToken}&language=English").Result;
                     var videoGetIndexResult = videoGetIndexRequestResult.Content.ReadAsStringAsync().Result;
 
                     var jObject = JObject.Parse(videoGetIndexResult);
@@ -151,35 +149,6 @@ namespace Vinar
             catch (Exception ex)
             {
                 ErrorOccurred?.Invoke(this, new TranscriptionErrorEventArgs() { Error = ex });
-            }
-        }
-
-        public class Credentials
-        {
-            public string AccountId = "";
-            public string ApiUrl = "";
-            public string Location = "";
-            public string ApiKey = "";
-
-            public string UrlBase
-            {
-                get { return $"{ApiUrl}/{Location}/Accounts/{AccountId}"; }
-            }
-
-            public string UrlBaseAuth
-            {
-                get { return $"{ApiUrl}/auth/{Location}/Accounts/{AccountId}"; }
-            }
-
-            public static Credentials Load(string path)
-            {
-                string yml = File.ReadAllText(path);
-
-                var deserializer = new DeserializerBuilder()
-                    .WithNamingConvention(CamelCaseNamingConvention.Instance)
-                    .Build();
-
-                return deserializer.Deserialize<Credentials>(yml);
             }
         }
 

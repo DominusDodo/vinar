@@ -52,6 +52,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Credentials.cs" />
     <Compile Include="FormVideoLoader.cs">
       <SubType>Form</SubType>
     </Compile>
