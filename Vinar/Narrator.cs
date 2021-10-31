@@ -55,9 +55,11 @@ namespace Vinar
                     directory = Path.Combine(Path.GetTempPath(), "Vinar", Path.GetRandomFileName());
                     Directory.CreateDirectory(directory);
 
-                    await Synthesise();
-                    await Align();
-                    await Combine();
+                    await synthesise();
+                    await align();
+                    await combine();
+
+                    //Directory.Delete(directory, true);
                 }
                 catch (Exception ex)
                 {
@@ -66,7 +68,7 @@ namespace Vinar
             });
         }
 
-        public async Task Combine()
+        private async Task combine()
         {
             CombinationStarted?.Invoke(this, new EventArgs());
             ProgressUpdated?.Invoke(this, new ProgressEventArgs() { Percent = 0 });
@@ -89,12 +91,10 @@ namespace Vinar
 
             await conversion.Start();
 
-            Directory.Delete(directory, true);
-
             NarrationCompleted?.Invoke(this, new EventArgs());
         }
 
-        public async Task Align()
+        private async Task align()
         {
             AlignmentStarted?.Invoke(this, new EventArgs());
             ProgressUpdated?.Invoke(this, new ProgressEventArgs() { Percent = 0 });
@@ -146,7 +146,7 @@ namespace Vinar
 
             IMediaInfo sinfo = await FFmpeg.GetMediaInfo(silencePath).ConfigureAwait(false);
             Func<IAudioStream> sstream = () => sinfo.AudioStreams.First();
-            Func<double, IAudioStream> silence = d => changeSpeed(sstream(), 1 / d);
+            Func<double, Task<IAudioStream>> silence = async d => await changeSpeed(sstream(), 1 / d);
 
 
             var allParts = new List<IAudioStream>();
@@ -163,12 +163,17 @@ namespace Vinar
                     ts = subtitles[i].Timestamp;
                     new TimeSpan(0, ts.Hour, ts.Minute, ts.Second, ts.Millisecond);
 
-                    allParts.Add(silence((start - elapsed).TotalSeconds));
-                    elapsed = elapsed.Add(start - elapsed);
+                    double d = (start - elapsed).TotalSeconds;
+
+                    if (d > 0)
+                    {
+                        allParts.Add(await silence(d));
+                        elapsed = elapsed.Add(start - elapsed);
+                    }
                 }
                 else
                 {
-                    allParts.Add(silence(start.TotalSeconds));
+                    allParts.Add(await silence(start.TotalSeconds));
                     elapsed = elapsed.Add(start);
                 }
 
@@ -189,9 +194,10 @@ namespace Vinar
                         {
                             // Speed it up
                             double m = duration.TotalSeconds / (end - start).TotalSeconds;
-                            part = changeSpeed(part, m);
-                            duration = TimeSpan.FromSeconds(duration.TotalSeconds / 2);
+                            part = await changeSpeed(part, m);
+                            duration = TimeSpan.FromSeconds(duration.TotalSeconds / m);
                         }
+
                         allParts.Add(part);
                         elapsed = elapsed.Add(duration);
                     }
@@ -237,24 +243,40 @@ namespace Vinar
             }
         }
 
-        private IAudioStream changeSpeed(IAudioStream stream, double multiplicator)
+        private async Task<IAudioStream> changeSpeed(IAudioStream stream, double multiplicator)
         {
             while (multiplicator > 2.0)
             {
+                stream = await saveAndReload(stream);
                 stream = stream.ChangeSpeed(2.0);
                 multiplicator /= 2.0;
             }
 
             while (multiplicator < 0.5)
             {
+                stream = await saveAndReload(stream);
                 stream = stream.ChangeSpeed(0.5);
                 multiplicator /= 0.5;
             }
 
+            stream = await saveAndReload(stream);
             return stream.ChangeSpeed(multiplicator);
         }
 
-        public async Task Synthesise()
+        private async Task<IAudioStream> saveAndReload(IAudioStream stream)
+        {
+            string zpartPath = Path.Combine(directory, "zpart_" + Path.ChangeExtension(Path.GetRandomFileName(), ".wav"));
+
+            await FFmpeg.Conversions.New()
+                .AddStream(stream)
+                .SetOutput(zpartPath)
+                .Start();
+
+            IMediaInfo zinfo = await FFmpeg.GetMediaInfo(zpartPath).ConfigureAwait(false);
+            return zinfo.AudioStreams.First();
+        }
+
+        private async Task synthesise()
         {
             SynthesisStarted?.Invoke(this, new EventArgs());
             ProgressUpdated?.Invoke(this, new ProgressEventArgs() { Percent = 0 });

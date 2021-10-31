@@ -363,6 +363,8 @@ namespace Vinar
                     createSubtitle(subtitle.Timestamp, subtitle.Content);
                 }
 
+                repositionSubtitles();
+
                 panelSubtitles.Enabled = true;
                 axWindowsMediaPlayer.Enabled = true;
 
