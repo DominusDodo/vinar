@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 using static Vinar.Transcriber;
+using static Vinar.Narrator;
 
 namespace Vinar
 {
@@ -21,10 +22,16 @@ namespace Vinar
         private string subtitleFilename;
         private Subtitle focused;
         private Subtitle editedTimestamp;
+        private Credentials credentials;
 
         public Vinar()
         {
             InitializeComponent();
+        }
+
+        private void Vinar_Load(object sender, EventArgs e)
+        {
+            credentials = Credentials.Load("../../../../../credentials.yml");
         }
 
         private Subtitle createSubtitle(DateTime timestamp, string content)
@@ -125,6 +132,19 @@ namespace Vinar
             panelSubtitles.ScrollControlIntoView(focused);
         }
 
+        private List<SubtitleEntry> produceSubtitles()
+        {
+            var subtitles = new List<SubtitleEntry>();
+
+            foreach (var control in panelSubtitles.Controls)
+            {
+                var subtitle = (Subtitle)control;
+                subtitles.Add(new SubtitleEntry { Timestamp = subtitle.Timestamp, Content = subtitle.Content });
+            }
+
+            return subtitles;
+        }
+
         private void openVideoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (openFileDialogVideo.ShowDialog() == DialogResult.OK)
@@ -168,19 +188,11 @@ namespace Vinar
 
         private void saveSubtitles()
         {
-            var subtitles = new List<SubtitleEntry>();
-
-            foreach (var control in panelSubtitles.Controls)
-            {
-                var subtitle = (Subtitle)control;
-                subtitles.Add(new SubtitleEntry { Timestamp = subtitle.Timestamp, Content = subtitle.Content });
-            }
-
             var serializer = new SerializerBuilder()
                 .WithNamingConvention(CamelCaseNamingConvention.Instance)
                 .Build();
 
-            var yaml = serializer.Serialize(subtitles);
+            var yaml = serializer.Serialize(produceSubtitles());
 
             File.WriteAllText(subtitleFilename, yaml);
         }
@@ -206,7 +218,42 @@ namespace Vinar
 
         private void createNarrationToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (saveFileDialogVideo.ShowDialog() != DialogResult.OK) return;
+            subtitleFilename = saveFileDialogSubtitles.FileName;
 
+            var narrator = new Narrator(credentials.Narration);
+
+            narrator.SynthesisStarted += (object sender1, EventArgs e1) => this.Invoke(new Action(() =>
+                toolStripStatusLabel.Text = "Synthesising speech..."
+            ));
+            narrator.AlignmentStarted += (object sender1, EventArgs e1) => this.Invoke(new Action(() =>
+                toolStripStatusLabel.Text = "Aligning speech..."
+            ));
+            narrator.CombinationStarted += (object sender1, EventArgs e1) => this.Invoke(new Action(() =>
+                toolStripStatusLabel.Text = "Combining audio and video..."
+            ));
+            narrator.ProgressUpdated += (object sender1, Narrator.ProgressEventArgs e1) => this.Invoke(new Action(() =>
+            {
+                if (e1.Percent > 100) Console.WriteLine(e1.Percent);
+                else toolStripProgressBar.Value = e1.Percent;
+            }));
+            narrator.ErrorOccurred += (object sender1, NarrationErrorEventArgs e1) => this.Invoke(new Action(() =>
+                MessageBox.Show(e1.Error.Message, "An error occurred")
+            ));
+            narrator.NarrationCompleted += (object sender1, EventArgs e1) => this.Invoke(new Action(() =>
+            {
+                panelSubtitles.Enabled = true;
+                axWindowsMediaPlayer.Enabled = true;
+
+                fileToolStripMenuItem.Enabled = true;
+                editToolStripMenuItem.Enabled = true;
+                enableIfFocused();
+
+                toolStripStatusLabel.Text = "Done";
+                toolStripProgressBar.Value = 0;
+            }));
+
+            narrator.Narrate(produceSubtitles(), videoFilename, saveFileDialogVideo.FileName);
         }
 
         private void axWindowsMediaPlayer_PositionChange(object sender, AxWMPLib._WMPOCXEvents_PositionChangeEvent e)
@@ -264,74 +311,73 @@ namespace Vinar
             string message = "Do you want to generate a transcript? You will not be able make changes until this is finished or cancelled.";
             var result = MessageBox.Show(message, "Generate transcript", MessageBoxButtons.OKCancel);
 
-            if (result == DialogResult.OK)
+            if (result != DialogResult.OK) return;
+
+            // Disable everything except the transcription cancellation menu item
+
+            ToolStripMenuItem[] inactiveWhileTranscribing =
             {
-                // Disable everything except the transcription cancellation menu item
+                fileToolStripMenuItem,
+                editToolStripMenuItem,
+                insertBeforeToolStripMenuItem,
+                insertAfterToolStripMenuItem,
+                deleteToolStripMenuItem,
+                mergeWithNextToolStripMenuItem,
+                mergeWithPreviousToolStripMenuItem,
+                splitToolStripMenuItem
+            };
 
-                ToolStripMenuItem[] inactiveWhileTranscribing =
+            panelSubtitles.Enabled = false;
+            axWindowsMediaPlayer.Enabled = false;
+
+            fileToolStripMenuItem.Enabled = false;
+            editToolStripMenuItem.Enabled = false;
+            enableIfFocused(true);
+
+            transcribeToolStripMenuItem.Text = "Cancel transcription";
+            transcribeToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.Shift | Keys.T;
+
+            var transcriber = new Transcriber(credentials.Transcription);
+
+            transcriber.LoadStarted += (object sender1, EventArgs e1) => this.Invoke(new Action(() =>
+                toolStripStatusLabel.Text = "Loading video..."
+            ));
+            transcriber.UploadStarted += (object sender1, EventArgs e1) => this.Invoke(new Action(() =>
+                toolStripStatusLabel.Text = "Uploading video..."
+            ));
+            transcriber.TranscriptionStarted += (object sender1, EventArgs e1) => this.Invoke(new Action(() => 
+                toolStripStatusLabel.Text = "Transcribing video..."
+            ));
+            transcriber.ProgressUpdated += (object sender1, Transcriber.ProgressEventArgs e1) => this.Invoke(new Action(() =>
+                toolStripProgressBar.Value = e1.Percent
+            ));
+            transcriber.ErrorOccurred += (object sender1, TranscriptionErrorEventArgs e1) => this.Invoke(new Action(() =>
+                MessageBox.Show(e1.Error.Message, "An error occurred")
+            ));
+            transcriber.TranscriptionCompleted += (object sender1, TranscriptionEventArgs e1) => this.Invoke(new Action(() =>
+            {
+                panelSubtitles.Controls.Clear();
+
+                foreach (var subtitle in e1.Subtitles)
                 {
-                    fileToolStripMenuItem,
-                    editToolStripMenuItem,
-                    insertBeforeToolStripMenuItem,
-                    insertAfterToolStripMenuItem,
-                    deleteToolStripMenuItem,
-                    mergeWithNextToolStripMenuItem,
-                    mergeWithPreviousToolStripMenuItem,
-                    splitToolStripMenuItem
-                };
+                    createSubtitle(subtitle.Timestamp, subtitle.Content);
+                }
 
-                panelSubtitles.Enabled = false;
-                axWindowsMediaPlayer.Enabled = false;
+                panelSubtitles.Enabled = true;
+                axWindowsMediaPlayer.Enabled = true;
 
-                fileToolStripMenuItem.Enabled = false;
-                editToolStripMenuItem.Enabled = false;
-                enableIfFocused(true);
+                fileToolStripMenuItem.Enabled = true;
+                editToolStripMenuItem.Enabled = true;
+                enableIfFocused();
 
-                transcribeToolStripMenuItem.Text = "Cancel transcription";
-                transcribeToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.Shift | Keys.T;
+                transcribeToolStripMenuItem.Text = "Transcribe";
+                transcribeToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.T;
 
-                var transcriber = new Transcriber(videoFilename);
+                toolStripStatusLabel.Text = "Done";
+                toolStripProgressBar.Value = 0;
+            }));
 
-                transcriber.LoadStarted += (object sender1, EventArgs e1) => this.Invoke(new Action(() =>
-                    toolStripStatusLabel.Text = "Loading video..."
-                ));
-                transcriber.UploadStarted += (object sender1, EventArgs e1) => this.Invoke(new Action(() =>
-                    toolStripStatusLabel.Text = "Uploading video..."
-                ));
-                transcriber.TranscriptionStarted += (object sender1, EventArgs e1) => this.Invoke(new Action(() => 
-                    toolStripStatusLabel.Text = "Transcribing video..."
-                ));
-                transcriber.ProgressUpdated += (object sender1, ProgressEventArgs e1) => this.Invoke(new Action(() =>
-                    toolStripProgressBar.Value = e1.Percent
-                ));
-                transcriber.ErrorOccurred += (object sender1, TranscriptionErrorEventArgs e1) => this.Invoke(new Action(() =>
-                    MessageBox.Show(e1.Error.Message, "An error occurred")
-                ));
-                transcriber.TranscriptionCompleted += (object sender1, TranscriptionEventArgs e1) => this.Invoke(new Action(() =>
-                {
-                    panelSubtitles.Controls.Clear();
-
-                    foreach (var subtitle in e1.Subtitles)
-                    {
-                        createSubtitle(subtitle.Timestamp, subtitle.Content);
-                    }
-
-                    panelSubtitles.Enabled = true;
-                    axWindowsMediaPlayer.Enabled = true;
-
-                    fileToolStripMenuItem.Enabled = true;
-                    editToolStripMenuItem.Enabled = true;
-                    enableIfFocused();
-
-                    transcribeToolStripMenuItem.Text = "Transcribe";
-                    transcribeToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.T;
-
-                    toolStripStatusLabel.Text = "Ready";
-                    toolStripProgressBar.Value = 0;
-                }));
-
-                Task.Run(() => transcriber.Transcribe());
-            }
+            Task.Run(() => transcriber.Transcribe(videoFilename));
         }
 
         private void insertBeforeToolStripMenuItem_Click(object sender, EventArgs e)

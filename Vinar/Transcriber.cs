@@ -14,7 +14,7 @@ namespace Vinar
 {
     class Transcriber
     {
-        private string videoPath;
+        private Credentials.TranscriptionCredentials credentials;
 
         public event EventHandler LoadStarted;
         public event EventHandler UploadStarted;
@@ -27,18 +27,16 @@ namespace Vinar
          * Transcriber uses Azure Video Indexer services to transcribe the video
          * at the given path into subtitles
          */
-        public Transcriber(string _videoPath)
+        public Transcriber(Credentials.TranscriptionCredentials _credentials)
         {
-            videoPath = _videoPath;
+            credentials = _credentials;
         }
 
-        public void Transcribe()
+        public void Transcribe(string videoPath)
         {
             try
             {
                 LoadStarted?.Invoke(this, new EventArgs());
-
-                var credentials = Credentials.Load("../../../../credentials.yml");
 
                 System.Net.ServicePointManager.SecurityProtocol |= System.Net.SecurityProtocolType.Tls12;
 
@@ -48,8 +46,8 @@ namespace Vinar
                 var client = new HttpClient(handler);
 
                 // Obtain access token
-                client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", credentials.Transcription.Key);
-                var accountAccessTokenRequestResult = client.GetAsync($"{credentials.Transcription.UrlBaseAuth}/AccessToken?allowEdit=true").Result;
+                client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", credentials.Key);
+                var accountAccessTokenRequestResult = client.GetAsync($"{credentials.UrlBaseAuth}/AccessToken?allowEdit=true").Result;
                 var accountAccessToken = accountAccessTokenRequestResult.Content.ReadAsStringAsync().Result.Replace("\"", "");
                 client.DefaultRequestHeaders.Remove("Ocp-Apim-Subscription-Key");
 
@@ -69,7 +67,7 @@ namespace Vinar
                 // Build upload request
                 string name = Path.GetFileName(videoPath);
                 string externalId = "123";
-                string uploadRequestUrl = $"{credentials.Transcription.UrlBase}/Videos?accessToken={accountAccessToken}&name={name}&privacy=private&externalId={externalId}";
+                string uploadRequestUrl = $"{credentials.UrlBase}/Videos?accessToken={accountAccessToken}&name={name}&privacy=private&externalId={externalId}";
 
                 // Send upload request
                 var uploadRequestResult = client.PostAsync(uploadRequestUrl, content).Result;
@@ -84,8 +82,8 @@ namespace Vinar
                 Debug.WriteLine("Video ID: " + videoId);
 
                 // Obtain video access token
-                client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", credentials.Transcription.Key);
-                var videoTokenRequestResult = client.GetAsync($"{credentials.Transcription.UrlBaseAuth}/Videos/{videoId}/AccessToken?allowEdit=true").Result;
+                client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", credentials.Key);
+                var videoTokenRequestResult = client.GetAsync($"{credentials.UrlBaseAuth}/Videos/{videoId}/AccessToken?allowEdit=true").Result;
                 var videoAccessToken = videoTokenRequestResult.Content.ReadAsStringAsync().Result.Replace("\"", "");
 
                 // Wait for video index to finish
@@ -97,7 +95,7 @@ namespace Vinar
                     Debug.WriteLine("Checking state...");
 
                     // Get processing state
-                    var videoGetIndexRequestResult = client.GetAsync($"{credentials.Transcription.UrlBase}/Videos/{videoId}/Index?accessToken={videoAccessToken}&language=English").Result;
+                    var videoGetIndexRequestResult = client.GetAsync($"{credentials.UrlBase}/Videos/{videoId}/Index?accessToken={videoAccessToken}&language=English").Result;
                     var videoGetIndexResult = videoGetIndexRequestResult.Content.ReadAsStringAsync().Result;
 
                     var jObject = JObject.Parse(videoGetIndexResult);

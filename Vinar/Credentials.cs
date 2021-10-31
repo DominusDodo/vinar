@@ -12,7 +12,7 @@ namespace Vinar
     public class Credentials
     {
         public TranscriptionCredentials Transcription;
-        public NarrationCredentials narration;
+        public NarrationCredentials Narration;
 
         public static Credentials Load(string path)
         {
