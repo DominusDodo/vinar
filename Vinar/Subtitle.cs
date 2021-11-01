@@ -12,7 +12,7 @@ namespace Vinar
 {
     public partial class Subtitle : UserControl
     {
-        private DateTime dt;
+        private TimeSpan timestamp;
 
         public event EventHandler TextBoxGotFocus;
         public event EventHandler TextBoxLostFocus;
@@ -30,13 +30,13 @@ namespace Vinar
             set { textBoxContent.SelectionStart = value; }
         }
 
-        public DateTime Timestamp
+        public TimeSpan Timestamp
         {
-            get { return dt; }
+            get { return timestamp; }
             set
             {
-                dt = value;
-                labelTimestamp.Text = String.Format("{0}:{1:d2}:{2:d2}.{3:d2}", dt.Hour, dt.Minute, dt.Second, dt.Millisecond / 10);
+                timestamp = value;
+                labelTimestamp.Text = timestamp.ToString(@"hh\:mm\:ss\.ff");
             }
         }
 

@@ -8,7 +8,7 @@ namespace Vinar
 {
     class SubtitleEntry
     {
-        public DateTime Timestamp;
+        public TimeSpan Timestamp;
         public string Content;
     }
 }

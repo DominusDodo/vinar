@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -124,9 +125,10 @@ namespace Vinar
                             Debug.WriteLine(subtitle);
 
                             string text = (string)subtitle["text"];
-                            DateTime datetime = DateTime.Parse((string)subtitle["instances"][0]["start"]);
+                            string stime = subtitle["instances"][0]["start"].ToString();
+                            TimeSpan timespan = TimeSpan.ParseExact(stime, "d:hh:mm:ss.ff", CultureInfo.InvariantCulture);
 
-                            subtitles.Add(new SubtitleEntry { Timestamp = datetime, Content = text });
+                            subtitles.Add(new SubtitleEntry { Timestamp = timespan, Content = text });
                         }
 
                         TranscriptionCompleted?.Invoke(this, new TranscriptionEventArgs() { Subtitles = subtitles });

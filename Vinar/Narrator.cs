@@ -155,14 +155,10 @@ namespace Vinar
 
             for (int i = 0; i < parts.Count; i++)
             {
-                var ts = subtitles[i].Timestamp;
-                var start = new TimeSpan(0, ts.Hour, ts.Minute, ts.Second, ts.Millisecond);
+                var start = subtitles[i].Timestamp;
 
                 if (i > 0)
                 {
-                    ts = subtitles[i].Timestamp;
-                    new TimeSpan(0, ts.Hour, ts.Minute, ts.Second, ts.Millisecond);
-
                     double d = (start - elapsed).TotalSeconds;
 
                     if (d > 0)
@@ -181,8 +177,7 @@ namespace Vinar
 
                 if (i + 1 < parts.Count)
                 {
-                    ts = subtitles[i + 1].Timestamp;
-                    var end = new TimeSpan(0, ts.Hour, ts.Minute, ts.Second, ts.Millisecond);
+                    var end = subtitles[i + 1].Timestamp;
 
                     // If timeslot has positive duration
                     if (end > start)

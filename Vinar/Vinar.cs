@@ -34,7 +34,7 @@ namespace Vinar
             credentials = Credentials.Load("../../../../../credentials.yml");
         }
 
-        private Subtitle createSubtitle(DateTime timestamp, string content)
+        private Subtitle createSubtitle(TimeSpan timestamp, string content)
         {
             Subtitle subtitle = new Subtitle();
             subtitle.Width = panelSubtitles.Width - subtitle.Margin.Horizontal;
@@ -261,13 +261,7 @@ namespace Vinar
             if (editedTimestamp == null) return;
 
             double t = e.newPosition;
-            int h = (int)t / 3600;
-            int m = (int)t % 3600 / 60 % 60;
-            int s = (int)t % 60;
-            int ms = (int)(t * 1000) % 1000;
-            DateTime timestamp = new DateTime(1970, 1, 1, h, m, s, ms);
-
-            editedTimestamp.Timestamp = timestamp;
+            editedTimestamp.Timestamp = TimeSpan.FromMilliseconds(t);
         }
 
         private void timerPlayback_Tick(object sender, EventArgs e)
@@ -275,13 +269,7 @@ namespace Vinar
             if (editedTimestamp == null) return;
 
             double t = axWindowsMediaPlayer.Ctlcontrols.currentPosition;
-            int h = (int)t / 3600;
-            int m = (int)t % 3600 / 60 % 60;
-            int s = (int)t % 60;
-            int ms = (int)(t * 1000) % 1000;
-            DateTime timestamp = new DateTime(1970, 1, 1, h, m, s, ms);
-            
-            editedTimestamp.Timestamp = timestamp;
+            editedTimestamp.Timestamp = TimeSpan.FromMilliseconds(t);
         }
 
         private void axWindowsMediaPlayer_PlayStateChange(object sender, AxWMPLib._WMPOCXEvents_PlayStateChangeEvent e)
