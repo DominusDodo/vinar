@@ -34,8 +34,12 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openVideoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
             this.openSubtitlesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveSubtitlesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveSubtitlesAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
+            this.createNarrationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.undoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.redoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -51,20 +55,16 @@
             this.splitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileDialogSubtitles = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialogSubtitles = new System.Windows.Forms.SaveFileDialog();
-            this.axWindowsMediaPlayer = new AxWMPLib.AxWindowsMediaPlayer();
             this.openFileDialogVideo = new System.Windows.Forms.OpenFileDialog();
             this.timerPlayback = new System.Windows.Forms.Timer(this.components);
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripProgressBar = new System.Windows.Forms.ToolStripProgressBar();
             this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.createNarrationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.saveSubtitlesAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
             this.saveFileDialogVideo = new System.Windows.Forms.SaveFileDialog();
+            this.axWindowsMediaPlayer = new AxWMPLib.AxWindowsMediaPlayer();
             this.menuStrip1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.axWindowsMediaPlayer)).BeginInit();
             this.statusStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.axWindowsMediaPlayer)).BeginInit();
             this.SuspendLayout();
             // 
             // panelSubtitles
@@ -111,6 +111,11 @@
             this.openVideoToolStripMenuItem.Text = "Load video...";
             this.openVideoToolStripMenuItem.Click += new System.EventHandler(this.openVideoToolStripMenuItem_Click);
             // 
+            // toolStripMenuItem2
+            // 
+            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(237, 6);
+            // 
             // openSubtitlesToolStripMenuItem
             // 
             this.openSubtitlesToolStripMenuItem.Name = "openSubtitlesToolStripMenuItem";
@@ -127,6 +132,28 @@
             this.saveSubtitlesToolStripMenuItem.Text = "Save subtitles...";
             this.saveSubtitlesToolStripMenuItem.Click += new System.EventHandler(this.saveSubtitlesToolStripMenuItem_Click);
             // 
+            // saveSubtitlesAsToolStripMenuItem
+            // 
+            this.saveSubtitlesAsToolStripMenuItem.Name = "saveSubtitlesAsToolStripMenuItem";
+            this.saveSubtitlesAsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
+            | System.Windows.Forms.Keys.S)));
+            this.saveSubtitlesAsToolStripMenuItem.Size = new System.Drawing.Size(240, 22);
+            this.saveSubtitlesAsToolStripMenuItem.Text = "Save subtitles as...";
+            this.saveSubtitlesAsToolStripMenuItem.Click += new System.EventHandler(this.saveSubtitlesAsToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem3
+            // 
+            this.toolStripMenuItem3.Name = "toolStripMenuItem3";
+            this.toolStripMenuItem3.Size = new System.Drawing.Size(237, 6);
+            // 
+            // createNarrationToolStripMenuItem
+            // 
+            this.createNarrationToolStripMenuItem.Name = "createNarrationToolStripMenuItem";
+            this.createNarrationToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.P)));
+            this.createNarrationToolStripMenuItem.Size = new System.Drawing.Size(240, 22);
+            this.createNarrationToolStripMenuItem.Text = "Create narration...";
+            this.createNarrationToolStripMenuItem.Click += new System.EventHandler(this.createNarrationToolStripMenuItem_Click);
+            // 
             // editToolStripMenuItem
             // 
             this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -140,14 +167,14 @@
             // 
             this.undoToolStripMenuItem.Name = "undoToolStripMenuItem";
             this.undoToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Z)));
-            this.undoToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.undoToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
             this.undoToolStripMenuItem.Text = "Undo";
             // 
             // redoToolStripMenuItem
             // 
             this.redoToolStripMenuItem.Name = "redoToolStripMenuItem";
             this.redoToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Y)));
-            this.redoToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.redoToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
             this.redoToolStripMenuItem.Text = "Redo";
             // 
             // subtitlesToolStripMenuItem
@@ -248,20 +275,6 @@
             this.saveFileDialogSubtitles.Filter = "Subtitle files (*.vnr)|*.vnr";
             this.saveFileDialogSubtitles.Title = "Save subtitles";
             // 
-            // axWindowsMediaPlayer
-            // 
-            this.axWindowsMediaPlayer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.axWindowsMediaPlayer.Enabled = true;
-            this.axWindowsMediaPlayer.Location = new System.Drawing.Point(408, 27);
-            this.axWindowsMediaPlayer.Name = "axWindowsMediaPlayer";
-            this.axWindowsMediaPlayer.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axWindowsMediaPlayer.OcxState")));
-            this.axWindowsMediaPlayer.Size = new System.Drawing.Size(507, 370);
-            this.axWindowsMediaPlayer.TabIndex = 3;
-            this.axWindowsMediaPlayer.PlayStateChange += new AxWMPLib._WMPOCXEvents_PlayStateChangeEventHandler(this.axWindowsMediaPlayer_PlayStateChange);
-            this.axWindowsMediaPlayer.PositionChange += new AxWMPLib._WMPOCXEvents_PositionChangeEventHandler(this.axWindowsMediaPlayer_PositionChange);
-            // 
             // openFileDialogVideo
             // 
             this.openFileDialogVideo.Filter = "Video files (*.mp4)|*.mp4";
@@ -292,45 +305,27 @@
             this.toolStripStatusLabel.Size = new System.Drawing.Size(42, 17);
             this.toolStripStatusLabel.Text = " Ready";
             // 
-            // createNarrationToolStripMenuItem
-            // 
-            this.createNarrationToolStripMenuItem.Name = "createNarrationToolStripMenuItem";
-            this.createNarrationToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.P)));
-            this.createNarrationToolStripMenuItem.Size = new System.Drawing.Size(240, 22);
-            this.createNarrationToolStripMenuItem.Text = "Create narration...";
-            this.createNarrationToolStripMenuItem.Click += new System.EventHandler(this.createNarrationToolStripMenuItem_Click);
-            // 
-            // saveSubtitlesAsToolStripMenuItem
-            // 
-            this.saveSubtitlesAsToolStripMenuItem.Name = "saveSubtitlesAsToolStripMenuItem";
-            this.saveSubtitlesAsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
-            | System.Windows.Forms.Keys.S)));
-            this.saveSubtitlesAsToolStripMenuItem.Size = new System.Drawing.Size(240, 22);
-            this.saveSubtitlesAsToolStripMenuItem.Text = "Save subtitles as...";
-            this.saveSubtitlesAsToolStripMenuItem.Click += new System.EventHandler(this.saveSubtitlesAsToolStripMenuItem_Click);
-            // 
-            // toolStripMenuItem2
-            // 
-            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(237, 6);
-            // 
-            // toolStripMenuItem3
-            // 
-            this.toolStripMenuItem3.Name = "toolStripMenuItem3";
-            this.toolStripMenuItem3.Size = new System.Drawing.Size(237, 6);
-            // 
             // saveFileDialogVideo
             // 
             this.saveFileDialogVideo.Filter = "Video files (*.mp4)|*.mp4";
             this.saveFileDialogVideo.Title = "Generate narrated video";
+            // 
+            // axWindowsMediaPlayer1
+            // 
+            this.axWindowsMediaPlayer.Enabled = true;
+            this.axWindowsMediaPlayer.Location = new System.Drawing.Point(408, 27);
+            this.axWindowsMediaPlayer.Name = "axWindowsMediaPlayer1";
+            this.axWindowsMediaPlayer.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axWindowsMediaPlayer1.OcxState")));
+            this.axWindowsMediaPlayer.Size = new System.Drawing.Size(507, 370);
+            this.axWindowsMediaPlayer.TabIndex = 5;
             // 
             // Vinar
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(927, 422);
-            this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.axWindowsMediaPlayer);
+            this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.panelSubtitles);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
@@ -339,9 +334,9 @@
             this.Load += new System.EventHandler(this.Vinar_Load);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.axWindowsMediaPlayer)).EndInit();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.axWindowsMediaPlayer)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -364,7 +359,6 @@
         private System.Windows.Forms.ToolStripMenuItem mergeWithNextToolStripMenuItem;
         private System.Windows.Forms.OpenFileDialog openFileDialogSubtitles;
         private System.Windows.Forms.SaveFileDialog saveFileDialogSubtitles;
-        private AxWMPLib.AxWindowsMediaPlayer axWindowsMediaPlayer;
         private System.Windows.Forms.OpenFileDialog openFileDialogVideo;
         private System.Windows.Forms.Timer timerPlayback;
         private System.Windows.Forms.StatusStrip statusStrip1;
@@ -380,6 +374,7 @@
         private System.Windows.Forms.ToolStripMenuItem saveSubtitlesAsToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem3;
         private System.Windows.Forms.SaveFileDialog saveFileDialogVideo;
+        private AxWMPLib.AxWindowsMediaPlayer axWindowsMediaPlayer;
     }
 }
 
