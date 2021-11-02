@@ -23,6 +23,7 @@ namespace Vinar
         private Subtitle focused;
         private Subtitle editedTimestamp;
         private Credentials credentials;
+        private string credentialsPassword;
 
         public Vinar()
         {
@@ -31,7 +32,7 @@ namespace Vinar
 
         private void Vinar_Load(object sender, EventArgs e)
         {
-            credentials = Credentials.Load("../../../../../credentials.yml");
+            loadCredentialsToolStripMenuItem.Enabled = Credentials.InRegistry();
         }
 
         private Subtitle createSubtitle(TimeSpan timestamp, string content)
@@ -145,6 +146,19 @@ namespace Vinar
             return subtitles;
         }
 
+        private bool loadCredentials()
+        {
+            if (credentials != null) return true;
+
+            var passwordEntry = new CredentialsPasswordEntry();
+            if (passwordEntry.ShowDialog() != DialogResult.OK) return false;
+
+            credentials = Credentials.FromRegistry(passwordEntry.Password);
+            createCredentialsToolStripMenuItem.Text = "Edit...";
+
+            return true;
+        }
+
         private void openVideoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (openFileDialogVideo.ShowDialog() == DialogResult.OK)
@@ -153,6 +167,7 @@ namespace Vinar
                 axWindowsMediaPlayer.URL = videoFilename;
 
                 transcribeToolStripMenuItem.Enabled = true;
+                createNarrationToolStripMenuItem.Enabled = true;
             }
         }
 
@@ -220,6 +235,12 @@ namespace Vinar
         {
             if (saveFileDialogVideo.ShowDialog() != DialogResult.OK) return;
             subtitleFilename = saveFileDialogSubtitles.FileName;
+
+            if (!loadCredentials())
+            {
+                MessageBox.Show("Narration cancelled because credentials were not provided", "Narration cancelled");
+                return;
+            }
 
             var narrator = new Narrator(credentials.Narration);
 
@@ -300,6 +321,12 @@ namespace Vinar
             var result = MessageBox.Show(message, "Generate transcript", MessageBoxButtons.OKCancel);
 
             if (result != DialogResult.OK) return;
+
+            if (!loadCredentials())
+            {
+                MessageBox.Show("Transcription cancelled because credentials were not provided", "Transcription cancelled");
+                return;
+            }
 
             // Disable everything except the transcription cancellation menu item
 
@@ -431,6 +458,60 @@ namespace Vinar
 
             panelSubtitles.Controls.SetChildIndex(subtitle, index + 1);
             repositionSubtitles();
+        }
+
+        private void importCredentialsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (openFileDialogCredentials.ShowDialog() != DialogResult.OK) return;
+
+            credentials = Credentials.FromFile(openFileDialogCredentials.FileName);
+            createCredentialsToolStripMenuItem.Text = "Edit...";
+            loadCredentialsToolStripMenuItem.Enabled = false;
+        }
+
+        private void exportCredentialsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (saveFileDialogCredentials.ShowDialog() != DialogResult.OK) return;
+
+            credentials.ToFile(saveFileDialogCredentials.FileName);
+        }
+
+        private void createCredentialsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var credentialsEditor = new CredentialsEditor();
+
+            if (credentials != null)
+            {
+                credentialsEditor.Credentials = credentials;
+            }
+
+            if (credentialsEditor.ShowDialog() == DialogResult.OK)
+            {
+                credentials = credentialsEditor.Credentials;
+                credentialsPassword = credentialsEditor.Password;
+
+                credentials.ToRegistry(credentialsPassword);
+            }
+        }
+
+        private void loadCredentialsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            loadCredentials();
+            credentials?.ToEncryptedYaml("a");
+        }
+
+        private void deleteCredentialsToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            string msg = "Are you sure you want to delete your service credentials?";
+
+            if (MessageBox.Show(msg, "Delete service credentials?", MessageBoxButtons.OKCancel) == DialogResult.OK)
+            {
+                Credentials.DeleteFromRegistry();
+                credentials = null;
+
+                createCredentialsToolStripMenuItem.Text = "Create...";
+                loadCredentialsToolStripMenuItem.Enabled = false;
+            }
         }
     }
 }

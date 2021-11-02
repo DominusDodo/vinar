@@ -12,7 +12,7 @@ namespace Vinar
 {
     public partial class Subtitle : UserControl
     {
-        private TimeSpan timestamp;
+        private TimeSpan timestamp = TimeSpan.Zero;
 
         public event EventHandler TextBoxGotFocus;
         public event EventHandler TextBoxLostFocus;

@@ -59,5 +59,14 @@ namespace Vinar.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Software\Vinar.
+        /// </summary>
+        internal static string RegistryBase {
+            get {
+                return ResourceManager.GetString("RegistryBase", resourceCulture);
+            }
+        }
     }
 }

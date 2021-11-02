@@ -40,6 +40,14 @@
             this.saveSubtitlesAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
             this.createNarrationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripSeparator();
+            this.credentialsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.importCredentialsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportCredentialsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem6 = new System.Windows.Forms.ToolStripSeparator();
+            this.loadCredentialsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.createCredentialsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.deleteCredentialsToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.undoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.redoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -62,6 +70,8 @@
             this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.saveFileDialogVideo = new System.Windows.Forms.SaveFileDialog();
             this.axWindowsMediaPlayer = new AxWMPLib.AxWindowsMediaPlayer();
+            this.openFileDialogCredentials = new System.Windows.Forms.OpenFileDialog();
+            this.saveFileDialogCredentials = new System.Windows.Forms.SaveFileDialog();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.axWindowsMediaPlayer)).BeginInit();
@@ -98,7 +108,9 @@
             this.saveSubtitlesToolStripMenuItem,
             this.saveSubtitlesAsToolStripMenuItem,
             this.toolStripMenuItem3,
-            this.createNarrationToolStripMenuItem});
+            this.createNarrationToolStripMenuItem,
+            this.toolStripMenuItem4,
+            this.credentialsToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
@@ -148,11 +160,70 @@
             // 
             // createNarrationToolStripMenuItem
             // 
+            this.createNarrationToolStripMenuItem.Enabled = false;
             this.createNarrationToolStripMenuItem.Name = "createNarrationToolStripMenuItem";
             this.createNarrationToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.P)));
             this.createNarrationToolStripMenuItem.Size = new System.Drawing.Size(240, 22);
             this.createNarrationToolStripMenuItem.Text = "Create narration...";
             this.createNarrationToolStripMenuItem.Click += new System.EventHandler(this.createNarrationToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem4
+            // 
+            this.toolStripMenuItem4.Name = "toolStripMenuItem4";
+            this.toolStripMenuItem4.Size = new System.Drawing.Size(237, 6);
+            // 
+            // credentialsToolStripMenuItem
+            // 
+            this.credentialsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.importCredentialsToolStripMenuItem,
+            this.exportCredentialsToolStripMenuItem,
+            this.toolStripMenuItem6,
+            this.loadCredentialsToolStripMenuItem,
+            this.createCredentialsToolStripMenuItem,
+            this.deleteCredentialsToolStripMenuItem1});
+            this.credentialsToolStripMenuItem.Name = "credentialsToolStripMenuItem";
+            this.credentialsToolStripMenuItem.Size = new System.Drawing.Size(240, 22);
+            this.credentialsToolStripMenuItem.Text = "Credentials";
+            // 
+            // importCredentialsToolStripMenuItem
+            // 
+            this.importCredentialsToolStripMenuItem.Name = "importCredentialsToolStripMenuItem";
+            this.importCredentialsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.importCredentialsToolStripMenuItem.Text = "Import...";
+            this.importCredentialsToolStripMenuItem.Click += new System.EventHandler(this.importCredentialsToolStripMenuItem_Click);
+            // 
+            // exportCredentialsToolStripMenuItem
+            // 
+            this.exportCredentialsToolStripMenuItem.Name = "exportCredentialsToolStripMenuItem";
+            this.exportCredentialsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exportCredentialsToolStripMenuItem.Text = "Export...";
+            this.exportCredentialsToolStripMenuItem.Click += new System.EventHandler(this.exportCredentialsToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem6
+            // 
+            this.toolStripMenuItem6.Name = "toolStripMenuItem6";
+            this.toolStripMenuItem6.Size = new System.Drawing.Size(177, 6);
+            // 
+            // loadCredentialsToolStripMenuItem
+            // 
+            this.loadCredentialsToolStripMenuItem.Name = "loadCredentialsToolStripMenuItem";
+            this.loadCredentialsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.loadCredentialsToolStripMenuItem.Text = "Load...";
+            this.loadCredentialsToolStripMenuItem.Click += new System.EventHandler(this.loadCredentialsToolStripMenuItem_Click);
+            // 
+            // createCredentialsToolStripMenuItem
+            // 
+            this.createCredentialsToolStripMenuItem.Name = "createCredentialsToolStripMenuItem";
+            this.createCredentialsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.createCredentialsToolStripMenuItem.Text = "Create...";
+            this.createCredentialsToolStripMenuItem.Click += new System.EventHandler(this.createCredentialsToolStripMenuItem_Click);
+            // 
+            // deleteCredentialsToolStripMenuItem1
+            // 
+            this.deleteCredentialsToolStripMenuItem1.Name = "deleteCredentialsToolStripMenuItem1";
+            this.deleteCredentialsToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.deleteCredentialsToolStripMenuItem1.Text = "Delete...";
+            this.deleteCredentialsToolStripMenuItem1.Click += new System.EventHandler(this.deleteCredentialsToolStripMenuItem1_Click);
             // 
             // editToolStripMenuItem
             // 
@@ -310,14 +381,22 @@
             this.saveFileDialogVideo.Filter = "Video files (*.mp4)|*.mp4";
             this.saveFileDialogVideo.Title = "Generate narrated video";
             // 
-            // axWindowsMediaPlayer1
+            // axWindowsMediaPlayer
             // 
             this.axWindowsMediaPlayer.Enabled = true;
             this.axWindowsMediaPlayer.Location = new System.Drawing.Point(408, 27);
-            this.axWindowsMediaPlayer.Name = "axWindowsMediaPlayer1";
-            this.axWindowsMediaPlayer.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axWindowsMediaPlayer1.OcxState")));
+            this.axWindowsMediaPlayer.Name = "axWindowsMediaPlayer";
+            this.axWindowsMediaPlayer.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axWindowsMediaPlayer.OcxState")));
             this.axWindowsMediaPlayer.Size = new System.Drawing.Size(507, 370);
             this.axWindowsMediaPlayer.TabIndex = 5;
+            // 
+            // openFileDialogCredentials
+            // 
+            this.openFileDialogCredentials.Filter = "Credentials files (*.yml)|*.yml";
+            // 
+            // saveFileDialogCredentials
+            // 
+            this.saveFileDialogCredentials.Filter = "Credentials files (*.yml)|*.yml";
             // 
             // Vinar
             // 
@@ -375,6 +454,16 @@
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem3;
         private System.Windows.Forms.SaveFileDialog saveFileDialogVideo;
         private AxWMPLib.AxWindowsMediaPlayer axWindowsMediaPlayer;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem4;
+        private System.Windows.Forms.ToolStripMenuItem credentialsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem importCredentialsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem exportCredentialsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem6;
+        private System.Windows.Forms.ToolStripMenuItem createCredentialsToolStripMenuItem;
+        private System.Windows.Forms.OpenFileDialog openFileDialogCredentials;
+        private System.Windows.Forms.SaveFileDialog saveFileDialogCredentials;
+        private System.Windows.Forms.ToolStripMenuItem loadCredentialsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem deleteCredentialsToolStripMenuItem1;
     }
 }
 
