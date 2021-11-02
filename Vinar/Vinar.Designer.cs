@@ -383,7 +383,7 @@
             // saveFileDialogVideo
             // 
             this.saveFileDialogVideo.Filter = "Video files (*.mp4)|*.mp4";
-            this.saveFileDialogVideo.Title = "Generate narrated video";
+            this.saveFileDialogVideo.Title = "Choose output location for narrated video";
             // 
             // axWindowsMediaPlayer
             // 
