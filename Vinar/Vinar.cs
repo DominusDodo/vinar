@@ -155,6 +155,7 @@ namespace Vinar
 
             credentials = Credentials.FromRegistry(passwordEntry.Password);
             createCredentialsToolStripMenuItem.Text = "Edit...";
+            loadCredentialsToolStripMenuItem.Enabled = false;
 
             return true;
         }
@@ -497,7 +498,6 @@ namespace Vinar
         private void loadCredentialsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             loadCredentials();
-            credentials?.ToEncryptedYaml("a");
         }
 
         private void deleteCredentialsToolStripMenuItem1_Click(object sender, EventArgs e)
