@@ -117,4 +117,11 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="label1.Text" xml:space="preserve">
+    <value>Vinar v1.0.0
+
+Vinar provides a means to replace the narration of a video, modifying the words spoken and their timings, and substituting synthetic speech.
+
+It was created by a team of four named Group M.</value>
+  </data>
 </root>

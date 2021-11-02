@@ -29,6 +29,7 @@ namespace Vinar
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AboutView));
             this.tabControlVinar = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.label1 = new System.Windows.Forms.Label();
@@ -70,11 +71,9 @@ namespace Vinar
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(7, 7);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(661, 39);
+            this.label1.Size = new System.Drawing.Size(661, 65);
             this.label1.TabIndex = 0;
-            this.label1.Text = "Vinar provides a means to replace the narration of a video, modifying the words s" +
-    "poken and their timings, and substituting synthetic speech.\r\n\r\nIt was created by" +
-    " a team of four named Group M.";
+            this.label1.Text = resources.GetString("label1.Text");
             // 
             // tabPage2
             // 
