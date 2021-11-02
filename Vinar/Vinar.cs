@@ -513,5 +513,11 @@ namespace Vinar
                 loadCredentialsToolStripMenuItem.Enabled = false;
             }
         }
+
+        private void aboutVinarToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var about = new AboutView();
+            about.ShowDialog();
+        }
     }
 }

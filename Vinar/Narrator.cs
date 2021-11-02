@@ -1,5 +1,4 @@
 ﻿using Microsoft.CognitiveServices.Speech;
-using SoxSharp;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

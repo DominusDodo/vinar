@@ -19,7 +19,7 @@ namespace Vinar.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -61,11 +61,145 @@ namespace Vinar.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The MIT License (MIT)
+        ///
+        ///Copyright (c) 2016 Simon Hughes
+        ///
+        ///Permission is hereby granted, free of charge, to any person obtaining a copy
+        ///of this software and associated documentation files (the &quot;Software&quot;), to deal
+        ///in the Software without restriction, including without limitation the rights
+        ///to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+        ///copies of the Software, and to permit persons to whom the Software is
+        ///furnished to do so, subject to the following conditions:
+        ///
+        ///The above c [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string Effortless_Net_Encryption {
+            get {
+                return ResourceManager.GetString("Effortless_Net_Encryption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to                   GNU LESSER GENERAL PUBLIC LICENSE
+        ///                       Version 2.1, February 1999
+        ///
+        /// Copyright (C) 1991, 1999 Free Software Foundation, Inc.
+        /// 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+        /// Everyone is permitted to copy and distribute verbatim copies
+        /// of this license document, but changing it is not allowed.
+        ///
+        ///[This is the first released version of the Lesser GPL.  It also counts
+        /// as the successor of the GNU Library Public License, version 2, hence
+        /// the version numb [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string FFmpeg {
+            get {
+                return ResourceManager.GetString("FFmpeg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MICROSOFT SOFTWARE LICENSE TERMS
+        ///
+        ///MICROSOFT COGNITIVE SERVICES SPEECH SDK
+        ///
+        ///IF YOU LIVE IN (OR ARE A BUSINESS WITH YOUR PRINCIPAL PLACE OF BUSINESS IN) THE UNITED STATES, PLEASE READ THE “BINDING ARBITRATION AND CLASS ACTION WAIVER” SECTION BELOW. IT AFFECTS HOW DISPUTES ARE RESOLVED.
+        ///
+        ///These license terms are an agreement between you and Microsoft Corporation (or one of its affiliates). They apply to the software named above and any Microsoft services or software updates (except to the extent such serv [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string Microsoft_CognitiveService_Speech {
+            get {
+                return ResourceManager.GetString("Microsoft_CognitiveService_Speech", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The MIT License (MIT)
+        ///
+        ///Copyright (c) 2007 James Newton-King
+        ///
+        ///Permission is hereby granted, free of charge, to any person obtaining a copy of
+        ///this software and associated documentation files (the &quot;Software&quot;), to deal in
+        ///the Software without restriction, including without limitation the rights to
+        ///use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+        ///the Software, and to permit persons to whom the Software is furnished to do so,
+        ///subject to the following conditions:
+        ///
+        ///The ab [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string Newtonsoft_Json {
+            get {
+                return ResourceManager.GetString("Newtonsoft_Json", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Software\Vinar.
         /// </summary>
         internal static string RegistryBase {
             get {
                 return ResourceManager.GetString("RegistryBase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Creative Commons Legal Code
+        ///
+        ///Attribution 3.0 Unported
+        ///
+        ///    CREATIVE COMMONS CORPORATION IS NOT A LAW FIRM AND DOES NOT PROVIDE
+        ///    LEGAL SERVICES. DISTRIBUTION OF THIS LICENSE DOES NOT CREATE AN
+        ///    ATTORNEY-CLIENT RELATIONSHIP. CREATIVE COMMONS PROVIDES THIS
+        ///    INFORMATION ON AN &quot;AS-IS&quot; BASIS. CREATIVE COMMONS MAKES NO WARRANTIES
+        ///    REGARDING THE INFORMATION PROVIDED, AND DISCLAIMS LIABILITY FOR
+        ///    DAMAGES RESULTING FROM ITS USE.
+        ///
+        ///License
+        ///
+        ///THE WORK (AS DEFINED BELOW) IS PROVIDED UNDER THE T [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string Xabe_FFmpeg {
+            get {
+                return ResourceManager.GetString("Xabe_FFmpeg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Creative Commons Legal Code
+        ///
+        ///Attribution 3.0 Unported
+        ///
+        ///    CREATIVE COMMONS CORPORATION IS NOT A LAW FIRM AND DOES NOT PROVIDE
+        ///    LEGAL SERVICES. DISTRIBUTION OF THIS LICENSE DOES NOT CREATE AN
+        ///    ATTORNEY-CLIENT RELATIONSHIP. CREATIVE COMMONS PROVIDES THIS
+        ///    INFORMATION ON AN &quot;AS-IS&quot; BASIS. CREATIVE COMMONS MAKES NO WARRANTIES
+        ///    REGARDING THE INFORMATION PROVIDED, AND DISCLAIMS LIABILITY FOR
+        ///    DAMAGES RESULTING FROM ITS USE.
+        ///
+        ///License
+        ///
+        ///THE WORK (AS DEFINED BELOW) IS PROVIDED UNDER THE T [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string Xabe_FFmpeg_Downloader {
+            get {
+                return ResourceManager.GetString("Xabe_FFmpeg_Downloader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copyright (c) 2008, 2009, 2010, 2011, 2012, 2013, 2014 Antoine Aubry and contributors
+        ///
+        ///Permission is hereby granted, free of charge, to any person obtaining a copy of
+        ///this software and associated documentation files (the &quot;Software&quot;), to deal in
+        ///the Software without restriction, including without limitation the rights to
+        ///use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+        ///of the Software, and to permit persons to whom the Software is furnished to do
+        ///so, subject to the followi [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string YamlDotNet {
+            get {
+                return ResourceManager.GetString("YamlDotNet", resourceCulture);
             }
         }
     }
